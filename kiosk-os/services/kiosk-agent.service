@@ -1,0 +1,47 @@
+[Unit]
+Description=Kiosk Management Agent
+Documentation=https://github.com/your-org/kiosk-management-system
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=kiosk
+Group=kiosk
+ExecStart=/usr/bin/python3 /usr/bin/kiosk-agent --config /etc/kiosk/management.conf
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+Restart=always
+RestartSec=10
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/log/kiosk /var/lib/kiosk /tmp
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+
+# Resource limits
+MemoryLimit=256M
+CPUQuota=50%
+
+# Environment
+Environment=PYTHONPATH=/usr/lib/kiosk
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kiosk-agent
+
+[Install]
+WantedBy=multi-user.target

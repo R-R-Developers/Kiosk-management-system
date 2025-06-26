@@ -1,0 +1,32 @@
+# Kiosk OS x86_64 Configuration - Ultra Minimal
+# Based on Buildroot 2023.08.1
+
+# Architecture
+BR2_x86_64=y
+
+# System
+BR2_SYSTEM_HOSTNAME="kiosk-device"
+BR2_SYSTEM_BANNER="Welcome to Kiosk OS"
+
+# Toolchain
+BR2_TOOLCHAIN_BUILDROOT_WCHAR=y
+BR2_TOOLCHAIN_BUILDROOT_CXX=y
+
+# Kernel
+BR2_LINUX_KERNEL=y
+BR2_LINUX_KERNEL_LATEST_VERSION=y
+BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG=y
+BR2_LINUX_KERNEL_BZIMAGE=y
+
+# Filesystem
+BR2_TARGET_ROOTFS_EXT2=y
+BR2_TARGET_ROOTFS_EXT2_4=y
+
+# Bootloader
+BR2_TARGET_GRUB2=y
+
+# Basic networking
+BR2_PACKAGE_DHCPCD=y
+
+# External package (kiosk-agent)
+BR2_PACKAGE_KIOSK_AGENT=y

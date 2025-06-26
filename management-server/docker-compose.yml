@@ -1,0 +1,105 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kiosk-postgres
+    environment:
+      POSTGRES_DB: kiosk_management
+      POSTGRES_USER: kiosk_admin
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - kiosk-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kiosk_admin -d kiosk_management"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kiosk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - kiosk-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Management Server
+  management-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kiosk-management-server
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: kiosk_management
+      DB_USER: kiosk_admin
+      DB_PASSWORD: secure_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: your_jwt_secret_change_in_production
+    ports:
+      - "3000:3000"
+    volumes:
+      - app_logs:/app/logs
+      - app_uploads:/app/uploads
+    networks:
+      - kiosk-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Nginx Reverse Proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: kiosk-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   networks:
+  #     - kiosk-network
+  #   depends_on:
+  #     - management-server
+  #   restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local
+  app_uploads:
+    driver: local
+
+networks:
+  kiosk-network:
+    driver: bridge

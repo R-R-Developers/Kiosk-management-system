@@ -1,0 +1,7 @@
+config BR2_PACKAGE_KIOSK_AGENT
+	bool "kiosk-agent"
+	depends on BR2_PACKAGE_PYTHON3
+	help
+	  Kiosk management agent for communication with management server.
+
+	  https://github.com/your-org/kiosk-management-system
