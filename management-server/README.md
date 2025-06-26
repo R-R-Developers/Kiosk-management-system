@@ -28,17 +28,17 @@ A comprehensive web-based management system for kiosk devices, inspired by FydeO
 
 ```
 ┌─────────────────────────────────────────┐
-│            Web Dashboard                │
+│         Web Dashboard                   │
 ├─────────────────────────────────────────┤
-│              REST API                   │
+│         REST API                        │
 ├─────────────────────────────────────────┤
-│          WebSocket Server               │
+│         WebSocket Server                │
 ├─────────────────────────────────────────┤
-│        Business Logic Layer            │
+│         Business Logic Layer            │
 ├─────────────────────────────────────────┤
 │         Database Layer                  │
 ├─────────────────────────────────────────┤
-│      PostgreSQL + Redis                 │
+│         PostgreSQL + Redis              │
 └─────────────────────────────────────────┘
 ```
 
