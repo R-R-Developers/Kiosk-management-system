@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install and Start Management Server",
+			"type": "shell",
+			"command": "npm install && cd client && npm install && npm run build && cd .. && npm run dev:full",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
